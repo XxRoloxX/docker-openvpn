@@ -46,6 +46,10 @@ func (h *ClientHandler) CreateClient(g *gin.Context) {
 	}
 
 	output, err := h.service.CreateClient(params.Name)
+	if err != nil {
+		g.JSON(http.StatusInternalServerError, "Failed to create client")
+		return
+	}
 
 	g.JSON(
 		http.StatusOK,
