@@ -42,5 +42,12 @@ func (s *ClientService) CreateClient(clientName string) (string, error) {
 		return "", err
 	}
 
+	cmd = exec.Command("ovpn_getclient", clientName)
+	output, err = cmd.Output()
+	if err != nil {
+		fmt.Println("Failed to get client .ovpn", err)
+		return "", err
+	}
+
 	return string(output), nil
 }
