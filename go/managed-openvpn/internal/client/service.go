@@ -28,7 +28,7 @@ func NewClientService() *ClientService {
 
 func (s *ClientService) CreateClient(clientName string) (string, error) {
 
-	cmd := exec.Command("easy-rsa",
+	cmd := exec.Command("easyrsa",
 		"--batch",
 		fmt.Sprintf("--passin=pass:%s", s.pkiPassword),
 		fmt.Sprintf("--passout=pass:%s", s.pkiPassword),
