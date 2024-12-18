@@ -8,7 +8,7 @@ services:
     environment:
       - PKI_PASSWORD=${PKI_PASSWORD} # Set this variable in your .env file or the environment
     volumes:
-      - openvpn_data:/etc/openvpn
+      - openvpn-data:/etc/openvpn
     ports:
       - "1194:1194/udp"
     cap_add:
@@ -16,5 +16,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  openvpn_data:
+  openvpn-data:
     external: true
