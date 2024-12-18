@@ -1,8 +1,10 @@
 package client
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
-	"os/exec"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
@@ -23,9 +25,30 @@ func NewClientHandler(params *ClientHandlerParams) *ClientHandler {
 	}
 }
 
+type CreateClientParams struct {
+	Name string `json:"name"`
+}
+
 func (h *ClientHandler) CreateClient(g *gin.Context) {
 
-	exec.Command("easy-rsa", "build-client-full", "client-name", "nopass")
+	body, err := io.ReadAll(g.Request.Body)
+	if err != nil {
+		g.JSON(http.StatusInternalServerError, "Failed to read request body")
+		return
+	}
 
-	g.JSON(http.StatusOK, "The client endpoint works")
+	params := CreateClientParams{}
+
+	err = json.Unmarshal(body, &params)
+	if err != nil {
+		g.JSON(http.StatusInternalServerError, "Failed to decode body")
+		return
+	}
+
+	output, err := h.service.CreateClient(params.Name)
+
+	g.JSON(
+		http.StatusOK,
+		fmt.Sprintf("The client endpoint works: %s", output),
+	)
 }
