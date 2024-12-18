@@ -19,7 +19,7 @@ type ClientHandlerParams struct {
 	Service *ClientService
 }
 
-func NewClientHandler(params *ClientHandlerParams) *ClientHandler {
+func NewClientHandler(params ClientHandlerParams) *ClientHandler {
 	return &ClientHandler{
 		service: params.Service,
 	}
