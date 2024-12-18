@@ -2,12 +2,13 @@ version: '3.8'
 
 services:
   openvpn:
-    image: rolo-openvpn
+    build:
+      dockerfile: Dockerfile
     container_name: openvpn
     environment:
       - PKI_PASSWORD=${PKI_PASSWORD} # Set this variable in your .env file or the environment
     volumes:
-      - ovpn_data:/etc/openvpn
+      - openvpn_data:/etc/openvpn
     ports:
       - "1194:1194/udp"
     cap_add:

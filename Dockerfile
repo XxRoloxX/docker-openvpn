@@ -38,8 +38,6 @@ WORKDIR /go/src/app
 
 COPY ./go .
 
-RUN ls -al
-
 # Build the Go microservice
 RUN cd ./managed-openvpn && go build -o /go/bin/microservice cmd/managed-openvpn/main.go
 
