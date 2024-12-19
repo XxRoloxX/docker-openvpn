@@ -18,9 +18,12 @@ type ClientRouterParams struct {
 
 func NewClientRouter(params ClientRouterParams) *ClientRouter {
 
-	clientRouter := params.RootRouter.GinRouter.Group("/client")
+	clientRouter := params.RootRouter.GinRouter.Group("/clients")
 
 	clientRouter.POST("", params.Handler.CreateClient)
+	clientRouter.GET("/:name", params.Handler.GetClient)
+	clientRouter.GET("", params.Handler.GetClients)
+	clientRouter.DELETE("/:name", params.Handler.RemoveClient)
 
 	return &ClientRouter{}
 }

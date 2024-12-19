@@ -105,12 +105,18 @@ func (s *BboltClientDataStore) RemoveClient(clientName string) error {
 		return err
 	}
 
-	bucket, err := tx.CreateBucketIfNotExists([]byte(CLIENTS_BUCKET))
-
-	currentClientData := bucket.Get([]byte(clientName))
-	if currentClientData == nil {
-		return errors.New(fmt.Sprintf("Client: %s doesn't exists in the database", clientName))
+	exists, err := s.DoesClientExists(clientName)
+	if err == nil {
+		s.logger.Sugar().Errorf("Failed to check if client exists %s: %s", clientName, err)
+		return err
 	}
+
+	if !exists {
+		s.logger.Sugar().Errorf("Client doesn't exist: %s", clientName)
+		return errors.New(fmt.Sprintf("Failed to remove non-existing client: %s", clientName))
+	}
+
+	bucket := tx.Bucket([]byte(CLIENTS_BUCKET))
 
 	err = bucket.Delete([]byte(clientName))
 	if err != nil {
@@ -171,18 +177,17 @@ func (s *BboltClientDataStore) GetAllClients() ([]*ClientData, error) {
 			return nil
 		}
 
-		cursor := bucket.Cursor()
-
-		for key, value := cursor.First(); key != nil; key, value = cursor.Next() {
+		bucket.ForEach(func(k, v []byte) error {
 			var currnetClientData ClientData
-			err := json.Unmarshal(value, &clientData)
+			err := json.Unmarshal(v, &currnetClientData)
 			if err != nil {
 				s.logger.Error("Failed to decode client data", zap.Error(err))
 				return err
 			}
 
 			clientData = append(clientData, &currnetClientData)
-		}
+			return nil
+		})
 
 		return nil
 	})
