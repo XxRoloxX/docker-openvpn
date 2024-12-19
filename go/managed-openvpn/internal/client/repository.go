@@ -133,10 +133,9 @@ func (s *BboltClientDataStore) GetClient(clientName string) (*ClientData, error)
 
 	err := s.db.View(func(tx *bbolt.Tx) error {
 
-		bucket, err := tx.CreateBucketIfNotExists([]byte(CLIENTS_BUCKET))
-		if err != nil {
-			s.logger.Error("Failed to start bbolt transaction", zap.Error(err))
-			return err
+		bucket := tx.Bucket([]byte(CLIENTS_BUCKET))
+		if bucket == nil {
+			return errors.New(fmt.Sprintf("Client: %s doesn't exists in the database", clientName))
 		}
 
 		currentClientData := bucket.Get([]byte(clientName))
@@ -144,7 +143,7 @@ func (s *BboltClientDataStore) GetClient(clientName string) (*ClientData, error)
 			return errors.New(fmt.Sprintf("Client: %s doesn't exists in the database", clientName))
 		}
 
-		err = json.Unmarshal(currentClientData, &clientData)
+		err := json.Unmarshal(currentClientData, &clientData)
 		if err != nil {
 			s.logger.Error("Failed to decode client data", zap.Error(err))
 			return err
@@ -167,17 +166,16 @@ func (s *BboltClientDataStore) GetAllClients() ([]*ClientData, error) {
 
 	err := s.db.View(func(tx *bbolt.Tx) error {
 
-		bucket, err := tx.CreateBucketIfNotExists([]byte(CLIENTS_BUCKET))
-		if err != nil {
-			s.logger.Error("Failed to start bbolt transaction", zap.Error(err))
-			return err
+		bucket := tx.Bucket([]byte(CLIENTS_BUCKET))
+		if bucket == nil {
+			return nil
 		}
 
 		cursor := bucket.Cursor()
 
 		for key, value := cursor.First(); key != nil; key, value = cursor.Next() {
 			var currnetClientData ClientData
-			err = json.Unmarshal(value, &clientData)
+			err := json.Unmarshal(value, &clientData)
 			if err != nil {
 				s.logger.Error("Failed to decode client data", zap.Error(err))
 				return err
@@ -203,10 +201,10 @@ func (s *BboltClientDataStore) DoesClientExists(clientName string) (bool, error)
 
 	err := s.db.View(func(tx *bbolt.Tx) error {
 
-		bucket, err := tx.CreateBucketIfNotExists([]byte(CLIENTS_BUCKET))
-		if err != nil {
-			s.logger.Error("Failed to start bbolt transaction", zap.Error(err))
-			return err
+		bucket := tx.Bucket([]byte(CLIENTS_BUCKET))
+		if bucket == nil {
+			doesClientExists = false
+			return nil
 		}
 
 		currentClientData := bucket.Get([]byte(clientName))
