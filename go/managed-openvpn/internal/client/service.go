@@ -93,8 +93,6 @@ func (s *ClientService) CreateClient(clientName string, email string) (*NewClien
 
 func (s *ClientService) RemoveClient(clientName string) error {
 
-	cmd := exec.Command("ovpn_revokeclient", clientName)
-
 	exists, err := s.clientDataStore.DoesClientExists(clientName)
 	if err != nil {
 		s.logger.Sugar().Errorf("Failed to check if client exists %s: %s", clientName, err)
@@ -105,6 +103,8 @@ func (s *ClientService) RemoveClient(clientName string) error {
 		s.logger.Sugar().Errorf("Failed to remove not-existing client %s: %s", clientName, err)
 		return errors.New(fmt.Sprintf("Client %s does not exist", clientName))
 	}
+
+	cmd := exec.Command("ovpn_revokeclient", clientName, s.pkiPassword)
 
 	_, err = cmd.Output()
 	if err != nil {
