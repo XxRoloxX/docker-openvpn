@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
-	"go.uber.org/fx"
 	"managed-openvpn/internal/client"
 	rootrouter "managed-openvpn/internal/root-router"
 	"net/http"
+
+	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 type ApplicationParams struct {
@@ -47,11 +49,16 @@ func NewApplication(lc fx.Lifecycle, params ApplicationParams) *Application {
 func main() {
 	fx.New(
 		fx.Provide(
+			zap.NewProduction,
 			rootrouter.NewRootRouter,
 			client.NewClientRouter,
 			client.NewClientHandler,
 			client.NewClientService,
 			NewApplication,
+			fx.Annotate(
+				client.NewBboltClientDataStore,
+				fx.As(new(client.ClientDataStore)),
+			),
 		),
 		fx.Invoke(func(*Application) {}),
 	).Run()

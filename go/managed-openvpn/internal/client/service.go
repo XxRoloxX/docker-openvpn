@@ -26,7 +26,7 @@ type ClientServiceParams struct {
 	Logger          *zap.Logger
 }
 
-func NewClientService(params *ClientServiceParams) *ClientService {
+func NewClientService(params ClientServiceParams) *ClientService {
 
 	pkiPasswd, isPkiPasswdSet := os.LookupEnv(PKI_PASSWORD_KEY)
 	if !isPkiPasswdSet {

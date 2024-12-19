@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   openvpn:
@@ -7,6 +7,7 @@ services:
     container_name: openvpn
     environment:
       - PKI_PASSWORD=${PKI_PASSWORD} # Set this variable in your .env file or the environment
+      - BBOLT_CLIENT_STORE_PATH=${BBOLT_CLIENT_STORE_PATH}
     volumes:
       - openvpn-data:/etc/openvpn
     ports:
