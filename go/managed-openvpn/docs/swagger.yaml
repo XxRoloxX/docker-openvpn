@@ -1,0 +1,135 @@
+definitions:
+  client.ClientData:
+    properties:
+      createdAt:
+        type: integer
+      email:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: integer
+    type: object
+  client.CreateClientParams:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+    type: object
+  client.NewClientData:
+    properties:
+      clientData:
+        $ref: '#/definitions/client.ClientData'
+      manifest:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /clients:
+    get:
+      description: Retrieve a list of all clients
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/client.ClientData'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get all clients
+      tags:
+      - clients
+    post:
+      consumes:
+      - application/json
+      description: Create a new client with the given name and email
+      parameters:
+      - description: Client details
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/client.CreateClientParams'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/client.NewClientData'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a new client
+      tags:
+      - clients
+  /clients/{name}:
+    delete:
+      description: Remove a client by name
+      parameters:
+      - description: Client name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Client removed successfully
+          schema:
+            type: "null"
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Remove a client
+      tags:
+      - clients
+    get:
+      description: Get details of a client by their name
+      parameters:
+      - description: Client name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/client.ClientData'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "404":
+          description: Client not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get a client by name
+      tags:
+      - clients
+swagger: "2.0"

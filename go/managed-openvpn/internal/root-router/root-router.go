@@ -2,6 +2,8 @@ package rootrouter
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 )
 
 type RootRouter struct {
@@ -9,7 +11,11 @@ type RootRouter struct {
 }
 
 func NewRootRouter() *RootRouter {
+
+	root := gin.Default()
+	root.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	return &RootRouter{
-		GinRouter: gin.Default(),
+		GinRouter: root,
 	}
 }
