@@ -8,6 +8,7 @@ services:
     environment:
       - PKI_PASSWORD=${PKI_PASSWORD} # Set this variable in your .env file or the environment
       - BBOLT_CLIENT_STORE_PATH=${BBOLT_CLIENT_STORE_PATH}
+      - M2M_AUTH_TOKEN=${M2M_AUTH_TOKEN}
     volumes:
       - openvpn-data:/etc/openvpn
     ports:
