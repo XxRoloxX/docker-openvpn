@@ -2,11 +2,13 @@ package rootrouter
 
 import (
 	"fmt"
+	"managed-openvpn/docs"
+	"managed-openvpn/internal/auth"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
-	"managed-openvpn/internal/auth"
-	"os"
 )
 
 type RootRouter struct {
@@ -23,6 +25,7 @@ func NewRootRouter() *RootRouter {
 	}
 
 	root := gin.Default()
+	docs.SwaggerInfo.BasePath = "/"
 	root.Use(auth.M2MAuthorizationRequired(m2mAuthToken))
 
 	root.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
