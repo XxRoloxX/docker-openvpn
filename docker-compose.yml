@@ -13,6 +13,7 @@ services:
       - openvpn-data:/etc/openvpn
     ports:
       - "1194:1194/udp"
+      - "8080:8080"
     cap_add:
       - NET_ADMIN
     restart: unless-stopped

@@ -25,7 +25,7 @@ type Application struct {
 func NewApplication(lc fx.Lifecycle, params ApplicationParams) *Application {
 
 	srv := &http.Server{
-		Addr:    "127.0.0.1:8080",
+		Addr:    ":8080",
 		Handler: params.RootRouter.GinRouter.Handler(),
 	}
 
